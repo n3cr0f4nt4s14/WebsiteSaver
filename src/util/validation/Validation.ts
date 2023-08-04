@@ -3,7 +3,7 @@
  * 
  * @author Necrofantasia
  * @created 2023.08.02
- * @updated 2023.08.03
+ * @updated 2023.08.05
  */
 
 /**
@@ -11,7 +11,7 @@
  * 
  * @author Necrofantasia
  * @created 2023.08.02
- * @updated 2023.08.03
+ * @updated 2023.08.05
  */
 class Validation {
 
@@ -22,6 +22,21 @@ class Validation {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// START - Special types																			//
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public static isNonNull(value: any): value is NonNullable<any> {
+		return value != null;
+	}
+
+	public static assertIsNonNullable(value: any): asserts value is NonNullable<unknown> {
+		if(value == null)
+			throw new TypeError("Argument `value` is `undefined` or `null`.");
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// START - Special types																			//
+	//																									//
 	// START - Primitives																				//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 

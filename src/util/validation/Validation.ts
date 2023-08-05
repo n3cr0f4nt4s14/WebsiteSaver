@@ -160,6 +160,8 @@ const buildTypeErrorMessage = (wanted: ValidationTypes, given: string): string =
 	return MSG_TYPE_1 + wanted + MSG_TYPE_2 + given + MSG_TYPE_3;
 };
 
+Object.freeze(Validation);
+
 export {
 	Validation
 };

@@ -25,6 +25,8 @@ enum ValidationTypes {
 	SYMBOL = "symbol"
 }
 
+Object.freeze(ValidationTypes);
+
 export {
     ValidationTypes
 };

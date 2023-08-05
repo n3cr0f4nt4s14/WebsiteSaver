@@ -12,6 +12,8 @@ import { ValidationTypes } from "./Internal";
 /**
  * The Validation class.
  * 
+ * A utility class that may be used to validate variables.
+ * 
  * @author Necrofantasia
  * @created 2023.08.02
  * @updated 2023.08.05

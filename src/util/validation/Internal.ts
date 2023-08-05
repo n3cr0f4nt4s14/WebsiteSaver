@@ -1,3 +1,8 @@
+import { Class } from "./Types";
+import { OptionalUndefined } from "./Types";
+import { OptionalNull } from "./Types";
+import { Optional } from "./Types";
+
 import { Validation } from "./Validation";
 import { ValidationTypes } from "./ValidationTypes";
 
@@ -13,6 +18,9 @@ import { ValidationTypes } from "./ValidationTypes";
  */
 
 export {
+	Class,
+	OptionalUndefined, OptionalNull, Optional,
+
 	Validation,
 	ValidationTypes
 };

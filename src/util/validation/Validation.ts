@@ -89,6 +89,8 @@ class Validation {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// END - Primitives																					//
+	//																									//
+	// START - Objects																					//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public static isFunction(value: any): value is Function {
@@ -116,6 +118,33 @@ class Validation {
 	public static assertIsInstanceOf<T>(value: any, clazz: Class<T>): asserts value is Class<T> {
 		if(!(value instanceof clazz))
 			throw new TypeError();
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// END - Objects																					//
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public static isTypeOf(value: any, type: ValidationTypes.BIGINT): value is bigint;
+	public static isTypeOf(value: any, type: ValidationTypes.BOOLEAN): value is boolean;
+	public static isTypeOf(value: any, type: ValidationTypes.FUNCTION): value is Function;
+	public static isTypeOf(value: any, type: ValidationTypes.NUMBER): value is number;
+	public static isTypeOf(value: any, type: ValidationTypes.OBJECT): value is object;
+	public static isTypeOf(value: any, type: ValidationTypes.STRING): value is string;
+	public static isTypeOf(value: any, type: ValidationTypes.SYMBOL): value is symbol;
+	public static isTypeOf(value: any, type: ValidationTypes): boolean {
+		return typeof value === type;
+	}
+
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.BIGINT): asserts value is bigint;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.BOOLEAN): asserts value is boolean;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.FUNCTION): asserts value is Function;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.NUMBER): asserts value is number;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.OBJECT): asserts value is object;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.STRING): asserts value is string;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.SYMBOL): asserts value is symbol;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes): void {
+		if(typeof value !== type)
+			throw new TypeError(buildTypeErrorMessage(type, typeof value));
 	}
 }
 

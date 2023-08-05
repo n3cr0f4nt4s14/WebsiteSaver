@@ -6,6 +6,7 @@
  * @updated 2023.08.05
  */
 
+import { Class } from "./Internal";
 import { ValidationTypes } from "./Internal";
 
 /**
@@ -106,6 +107,15 @@ class Validation {
 	public static assertIsObject(value: any): asserts value is object {
 		if(typeof value !== "object")
 			throw new TypeError(buildTypeErrorMessage(ValidationTypes.OBJECT, typeof value));
+	}
+
+	public static isInstanceOf<T>(value: any, clazz: Class<T>): value is Class<T> {
+		return value instanceof clazz;
+	}
+
+	public static assertIsInstanceOf<T>(value: any, clazz: Class<T>): asserts value is Class<T> {
+		if(!(value instanceof clazz))
+			throw new TypeError();
 	}
 }
 

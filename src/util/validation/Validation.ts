@@ -89,6 +89,15 @@ class Validation {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// END - Primitives																					//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public static isFunction(value: any): value is Function {
+		return typeof value === "function";
+	}
+
+	public static assertIsFunction(value: any): asserts value is Function {
+		if(typeof value !== "function")
+			throw new TypeError(buildTypeErrorMessage(ValidationTypes.FUNCTION, typeof value));
+	}
 }
 
 const MSG_NULLABLE_1: string = "Argument is `";

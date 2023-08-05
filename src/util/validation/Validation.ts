@@ -98,6 +98,15 @@ class Validation {
 		if(typeof value !== "function")
 			throw new TypeError(buildTypeErrorMessage(ValidationTypes.FUNCTION, typeof value));
 	}
+
+	public static isObject(value: any): value is object {
+		return typeof value === "object";
+	}
+
+	public static assertIsObject(value: any): asserts value is object {
+		if(typeof value !== "object")
+			throw new TypeError(buildTypeErrorMessage(ValidationTypes.OBJECT, typeof value));
+	}
 }
 
 const MSG_NULLABLE_1: string = "Argument is `";

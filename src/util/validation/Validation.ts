@@ -34,8 +34,10 @@ class Validation {
 	}
 
 	public static assertIsNonNullable(value: any): asserts value is NonNullable<unknown> {
-		if(value == null)
-			throw new TypeError(MSG_NULLABLE_1 + typeof value + MSG_NULLABLE_2);
+		if(value === undefined)
+			throw new TypeError(MSG_NULLABLE + "undefined" + MSG_CLOSING);
+		if(value === null)
+			throw new TypeError(MSG_NULLABLE + "null" + MSG_CLOSING);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +52,7 @@ class Validation {
 
 	public static assertIsBigint(value: any): asserts value is bigint {
 		if(typeof value !== "bigint")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.BIGINT, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.BIGINT, typeof value));
 	}
 
 	public static isBoolean(value: any): value is boolean {
@@ -59,7 +61,7 @@ class Validation {
 
 	public static assertIsBoolean(value: any): asserts value is boolean {
 		if(typeof value !== "boolean")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.BOOLEAN, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.BOOLEAN, typeof value));
 	}
 
 	public static isNumber(value: any): value is number {
@@ -68,7 +70,7 @@ class Validation {
 
 	public static assertIsNumber(value: any): asserts value is number {
 		if(typeof value !== "number")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.NUMBER, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.NUMBER, typeof value));
 	}
 
 	public static isString(value: any): value is string {
@@ -77,7 +79,7 @@ class Validation {
 
 	public static assertIsString(value: any): asserts value is string {
 		if(typeof value !== "string")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.STRING, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.STRING, typeof value));
 	}
 
 	public static isSymbol(value: any): value is symbol {
@@ -86,7 +88,7 @@ class Validation {
 
 	public static assertIsSymbol(value: any): asserts value is symbol {
 		if(typeof value !== "symbol")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.SYMBOL, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.SYMBOL, typeof value));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +103,7 @@ class Validation {
 
 	public static assertIsFunction(value: any): asserts value is Function {
 		if(typeof value !== "function")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.FUNCTION, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.FUNCTION, typeof value));
 	}
 
 	public static isObject(value: any): value is object {
@@ -110,16 +112,18 @@ class Validation {
 
 	public static assertIsObject(value: any): asserts value is object {
 		if(typeof value !== "object")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.OBJECT, typeof value));
+			throw new TypeError(buildMessage(ValidationTypes.OBJECT, typeof value));
 	}
 
 	public static isInstanceOf<T>(value: any, clazz: Class<T>): value is Class<T> {
 		return value instanceof clazz;
 	}
 
-	public static assertIsInstanceOf<T>(value: any, clazz: Class<T>): asserts value is Class<T> {
-		if(!(value instanceof clazz))
-			throw new TypeError();
+	public static assertIsInstanceOf<T>(value: unknown, clazz: Class<T>): asserts value is Class<T> {
+		if(!(value instanceof Object))
+			throw new TypeError(MSG_INSTANCE_1 + Object.name + MSG_CLOSING);
+		else if(!(value instanceof clazz))
+			throw new TypeError(MSG_INSTANCE_1 + clazz.name + MSG_INSTANCE_2 + value.constructor.name + MSG_CLOSING);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,18 +150,20 @@ class Validation {
 	public static assertsIsTypeOf(value: any, type: ValidationTypes.SYMBOL): asserts value is symbol;
 	public static assertsIsTypeOf(value: any, type: ValidationTypes): void {
 		if(typeof value !== type)
-			throw new TypeError(buildTypeErrorMessage(type, typeof value));
+			throw new TypeError(buildMessage(type, typeof value));
 	}
 }
 
-const MSG_NULLABLE_1: string = "Argument is `";
-const MSG_NULLABLE_2: string = "`.";
-const MSG_TYPE_1: string = "Argument is not of type `";
-const MSG_TYPE_2: string = "`. Given: `";
-const MSG_TYPE_3: string = "`.";
+const MSG_CLOSING: string = "`.";
 
-const buildTypeErrorMessage = (wanted: ValidationTypes, given: string): string => {
-	return MSG_TYPE_1 + wanted + MSG_TYPE_2 + given + MSG_TYPE_3;
+const MSG_NULLABLE: string = "Argument is `";
+const MSG_TYPE_1: string = "Argument is not of type `";
+const MSG_TYPE_2: string = "`. Given type: `";
+const MSG_INSTANCE_1: string = "Argument is not an instance of `";
+const MSG_INSTANCE_2: string = "`. Given instance: `";
+
+const buildMessage = (wanted: ValidationTypes, given: string): string => {
+	return MSG_TYPE_1 + wanted + MSG_TYPE_2 + given + MSG_CLOSING;
 };
 
 Object.freeze(Validation);

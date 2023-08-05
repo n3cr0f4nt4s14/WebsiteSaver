@@ -132,7 +132,60 @@ class Validation {
 
 	public static assertIsArray(value: any): asserts value is Array<any> {
 		if(!Array.isArray(value))
-			throw new TypeError(MSG_ARRAY);
+			throw new TypeError(MSG_ARRAY_1);
+	}
+
+	public static isArrayOf(value: any, type: ValidationTypes.BIGINT): value is Array<bigint>;
+	public static isArrayOf(value: any, type: ValidationTypes.BOOLEAN): value is Array<boolean>;
+	public static isArrayOf(value: any, type: ValidationTypes.FUNCTION): value is Array<Function>;
+	public static isArrayOf(value: any, type: ValidationTypes.NUMBER): value is Array<number>;
+	public static isArrayOf(value: any, type: ValidationTypes.OBJECT): value is Array<object>;
+	public static isArrayOf(value: any, type: ValidationTypes.STRING): value is Array<string>;
+	public static isArrayOf(value: any, type: ValidationTypes.SYMBOL): value is Array<symbol>;
+	public static isArrayOf(value: any, type: any): boolean {
+		let isArray: boolean = false;
+		let allSameType: boolean = false;
+		if(Array.isArray(value)) {
+			isArray = true;
+
+			allSameType = value.every(elem => typeof elem === type);
+		}
+
+		return isArray && allSameType;
+	}
+
+	public static assertIsArrayOf(value: any, type: ValidationTypes.BIGINT): asserts value is Array<bigint>;
+	public static assertIsArrayOf(value: any, type: ValidationTypes.BOOLEAN): asserts value is Array<boolean>;
+	public static assertIsArrayOf(value: any, type: ValidationTypes.FUNCTION): asserts value is Array<Function>;
+	public static assertIsArrayOf(value: any, type: ValidationTypes.NUMBER): asserts value is Array<number>;
+	public static assertIsArrayOf(value: any, type: ValidationTypes.OBJECT): asserts value is Array<object>;
+	public static assertIsArrayOf(value: any, type: ValidationTypes.STRING): asserts value is Array<string>;
+	public static assertIsArrayOf(value: any, type: ValidationTypes.SYMBOL): asserts value is Array<symbol>;
+	public static assertIsArrayOf(value: any, type: any): void {
+		if(!Validation.isArrayOf(value, type))
+			//TODO: Add error message.
+			throw new TypeError();
+	}
+
+	public static isArrayInstanceOf<T>(value: any, clazz: Class<T>, allowNullable: boolean = false): value is Array<Class<T>> {
+		let isArray: boolean = false;
+		let allSameType: boolean = false;
+		if(Array.isArray(value)) {
+			isArray = true;
+
+			if(allowNullable)
+				allSameType = value.every(elem => elem == null || elem instanceof clazz);
+			else
+				allSameType = value.every(elem => elem instanceof clazz);
+		}
+
+		return isArray && allSameType;
+	}
+
+	public static assertIsArrayInstanceOf<T>(value: any, clazz: Class<T>, allowNullable: boolean = false): asserts value is Array<Class<T>> {
+		if(!this.isArrayInstanceOf(value, clazz, allowNullable))
+			//TODO: Add error message.
+			throw new TypeError();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,7 +223,8 @@ const MSG_TYPE_1: string = "Argument is not of type `";
 const MSG_TYPE_2: string = "`. Given type: `";
 const MSG_INSTANCE_1: string = "Argument is not an instance of `";
 const MSG_INSTANCE_2: string = "`. Given instance: `";
-const MSG_ARRAY: string = "Argument is not an array.";
+const MSG_ARRAY_1: string = "Argument is not an array.";
+const MSG_ARRAY_2: string = "Argument is not an array of type `";
 
 const buildMessage = (wanted: ValidationTypes, given: string): string => {
 	return MSG_TYPE_1 + wanted + MSG_TYPE_2 + given + MSG_CLOSING;

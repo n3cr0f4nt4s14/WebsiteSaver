@@ -126,6 +126,15 @@ class Validation {
 			throw new TypeError(MSG_INSTANCE_1 + clazz.name + MSG_INSTANCE_2 + value.constructor.name + MSG_CLOSING);
 	}
 
+	public static isArray(value: any): value is Array<any> {
+		return Array.isArray(value);
+	}
+
+	public static assertIsArray(value: any): asserts value is Array<any> {
+		if(!Array.isArray(value))
+			throw new TypeError(MSG_ARRAY);
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// END - Objects																					//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,6 +170,7 @@ const MSG_TYPE_1: string = "Argument is not of type `";
 const MSG_TYPE_2: string = "`. Given type: `";
 const MSG_INSTANCE_1: string = "Argument is not an instance of `";
 const MSG_INSTANCE_2: string = "`. Given instance: `";
+const MSG_ARRAY: string = "Argument is not an array.";
 
 const buildMessage = (wanted: ValidationTypes, given: string): string => {
 	return MSG_TYPE_1 + wanted + MSG_TYPE_2 + given + MSG_CLOSING;

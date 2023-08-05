@@ -6,7 +6,7 @@
  * @updated 2023.08.05
  */
 
-import { ValidationTypes } from "./ValidationTypes";
+import { ValidationTypes } from "./Internal";
 
 /**
  * The Validation class.

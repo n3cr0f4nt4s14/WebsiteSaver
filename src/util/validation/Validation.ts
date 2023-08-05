@@ -41,6 +41,15 @@ class Validation {
 	// START - Primitives																				//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public static isBigint(value: any): value is bigint {
+		return typeof value === "bigint";
+	}
+
+	public static assertIsBigint(value: any): asserts value is bigint {
+		if(typeof value !== "bigint")
+			throw new TypeError(buildTypeErrorMessage(ValidationTypes.BIGINT, typeof value));
+	}
+
 	public static isBoolean(value: any): value is boolean {
 		return typeof value === "boolean";
 	}
@@ -57,15 +66,6 @@ class Validation {
 	public static assertIsNumber(value: any): asserts value is number {
 		if(typeof value !== "number")
 			throw new TypeError(buildTypeErrorMessage(ValidationTypes.NUMBER, typeof value));
-	}
-
-	public static isBigint(value: any): value is bigint {
-		return typeof value === "bigint";
-	}
-
-	public static assertIsBigint(value: any): asserts value is bigint {
-		if(typeof value !== "bigint")
-			throw new TypeError(buildTypeErrorMessage(ValidationTypes.BIGINT, typeof value));
 	}
 
 	public static isString(value: any): value is string {

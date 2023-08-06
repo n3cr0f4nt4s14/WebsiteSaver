@@ -3,7 +3,7 @@
  * 
  * @author Necrofantasia
  * @created 2023.08.02
- * @updated 2023.08.05
+ * @updated 2023.08.06
  */
 
 import { Class } from "./Internal";
@@ -16,7 +16,7 @@ import { ValidationTypes } from "./Internal";
  * 
  * @author Necrofantasia
  * @created 2023.08.02
- * @updated 2023.08.05
+ * @updated 2023.08.06
  */
 class Validation {
 	/** This is a utility class. It contains only static methods and is non instantiable. */
@@ -29,7 +29,7 @@ class Validation {
 	// START - Special types																			//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static isNonNull(value: any): value is NonNullable<any> {
+	public static isNonNullable(value: any): value is NonNullable<any> {
 		return value != null;
 	}
 

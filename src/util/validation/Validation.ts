@@ -43,7 +43,7 @@ class Validation {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// START - Special types																			//
 	//																									//
-	// START - Primitives																				//
+	// START - Primitive type checks																	//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public static isBigint(value: any): value is bigint {
@@ -64,6 +64,15 @@ class Validation {
 			throw new TypeError(buildMessage(ValidationTypes.BOOLEAN, typeof value));
 	}
 
+	public static isFunction(value: any): value is Function {
+		return typeof value === "function";
+	}
+
+	public static assertIsFunction(value: any): asserts value is Function {
+		if(typeof value !== "function")
+			throw new TypeError(buildMessage(ValidationTypes.FUNCTION, typeof value));
+	}
+
 	public static isNumber(value: any): value is number {
 		return typeof value === "number";
 	}
@@ -71,6 +80,15 @@ class Validation {
 	public static assertIsNumber(value: any): asserts value is number {
 		if(typeof value !== "number")
 			throw new TypeError(buildMessage(ValidationTypes.NUMBER, typeof value));
+	}
+
+	public static isObject(value: any): value is object {
+		return typeof value === "object";
+	}
+
+	public static assertIsObject(value: any): asserts value is object {
+		if(typeof value !== "object")
+			throw new TypeError(buildMessage(ValidationTypes.OBJECT, typeof value));
 	}
 
 	public static isString(value: any): value is string {
@@ -91,28 +109,42 @@ class Validation {
 			throw new TypeError(buildMessage(ValidationTypes.SYMBOL, typeof value));
 	}
 
+	public static isTypeOf(value: any, type: ValidationTypes.BIGINT): value is bigint;
+	public static isTypeOf(value: any, type: ValidationTypes.BOOLEAN): value is boolean;
+	public static isTypeOf(value: any, type: ValidationTypes.FUNCTION): value is Function;
+	public static isTypeOf(value: any, type: ValidationTypes.NUMBER): value is number;
+	public static isTypeOf(value: any, type: ValidationTypes.OBJECT): value is object;
+	public static isTypeOf(value: any, type: ValidationTypes.STRING): value is string;
+	public static isTypeOf(value: any, type: ValidationTypes.SYMBOL): value is symbol;
+	public static isTypeOf(value: any, type: ValidationTypes): boolean {
+		return typeof value === type;
+	}
+
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.BIGINT): asserts value is bigint;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.BOOLEAN): asserts value is boolean;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.FUNCTION): asserts value is Function;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.NUMBER): asserts value is number;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.OBJECT): asserts value is object;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.STRING): asserts value is string;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes.SYMBOL): asserts value is symbol;
+	public static assertsIsTypeOf(value: any, type: ValidationTypes): void {
+		if(typeof value !== type)
+			throw new TypeError(buildMessage(type, typeof value));
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	// END - Primitives																					//
+	// END - Primitive type checks																		//
 	//																									//
-	// START - Objects																					//
+	// START - Complex type checks																		//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static isFunction(value: any): value is Function {
-		return typeof value === "function";
+	public static isArray(value: any): value is Array<any> {
+		return Array.isArray(value);
 	}
 
-	public static assertIsFunction(value: any): asserts value is Function {
-		if(typeof value !== "function")
-			throw new TypeError(buildMessage(ValidationTypes.FUNCTION, typeof value));
-	}
-
-	public static isObject(value: any): value is object {
-		return typeof value === "object";
-	}
-
-	public static assertIsObject(value: any): asserts value is object {
-		if(typeof value !== "object")
-			throw new TypeError(buildMessage(ValidationTypes.OBJECT, typeof value));
+	public static assertIsArray(value: any): asserts value is Array<any> {
+		if(!Array.isArray(value))
+			throw new TypeError(MSG_ARRAY);
 	}
 
 	public static isInstanceOf<T>(value: any, clazz: Class<T>): value is Class<T> {
@@ -124,15 +156,6 @@ class Validation {
 			throw new TypeError(MSG_INSTANCE_1 + Object.name + MSG_CLOSING);
 		else if(!(value instanceof clazz))
 			throw new TypeError(MSG_INSTANCE_1 + clazz.name + MSG_INSTANCE_2 + value.constructor.name + MSG_CLOSING);
-	}
-
-	public static isArray(value: any): value is Array<any> {
-		return Array.isArray(value);
-	}
-
-	public static assertIsArray(value: any): asserts value is Array<any> {
-		if(!Array.isArray(value))
-			throw new TypeError(MSG_ARRAY_1);
 	}
 
 	public static isArrayOf(value: any, type: ValidationTypes.BIGINT): value is Array<bigint>;
@@ -162,9 +185,13 @@ class Validation {
 	public static assertIsArrayOf(value: any, type: ValidationTypes.STRING): asserts value is Array<string>;
 	public static assertIsArrayOf(value: any, type: ValidationTypes.SYMBOL): asserts value is Array<symbol>;
 	public static assertIsArrayOf(value: any, type: any): void {
-		if(!Validation.isArrayOf(value, type))
-			//TODO: Add error message.
-			throw new TypeError();
+		if(!Array.isArray(value)) {
+			throw new TypeError(MSG_ARRAY);
+		}
+
+		if(!value.every(elem => typeof elem === type)) {
+			throw new TypeError(MSG_ARRAY_TYPE + type + MSG_CLOSING);
+		}
 	}
 
 	public static isArrayInstanceOf<T>(value: any, clazz: Class<T>, allowNullable: boolean = false): value is Array<Class<T>> {
@@ -173,47 +200,38 @@ class Validation {
 		if(Array.isArray(value)) {
 			isArray = true;
 
-			if(allowNullable)
+			if(allowNullable) {
 				allSameType = value.every(elem => elem == null || elem instanceof clazz);
-			else
+			}
+			else {
 				allSameType = value.every(elem => elem instanceof clazz);
+			}
 		}
 
 		return isArray && allSameType;
 	}
 
 	public static assertIsArrayInstanceOf<T>(value: any, clazz: Class<T>, allowNullable: boolean = false): asserts value is Array<Class<T>> {
-		if(!this.isArrayInstanceOf(value, clazz, allowNullable))
-			//TODO: Add error message.
-			throw new TypeError();
+		if(!Array.isArray(value)) {
+			throw new TypeError(MSG_ARRAY);
+		}
+
+		let allSameType: boolean = false;
+		if(allowNullable) {
+			allSameType = value.every(elem => elem == null || elem instanceof clazz);
+		}
+		else {
+			allSameType = value.every(elem => elem instanceof clazz);
+		}
+
+		if(!allSameType) {
+			throw new TypeError(MSG_ARRAY_TYPE + clazz.name + MSG_CLOSING);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	// END - Objects																					//
+	// END - Complex type checks																		//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public static isTypeOf(value: any, type: ValidationTypes.BIGINT): value is bigint;
-	public static isTypeOf(value: any, type: ValidationTypes.BOOLEAN): value is boolean;
-	public static isTypeOf(value: any, type: ValidationTypes.FUNCTION): value is Function;
-	public static isTypeOf(value: any, type: ValidationTypes.NUMBER): value is number;
-	public static isTypeOf(value: any, type: ValidationTypes.OBJECT): value is object;
-	public static isTypeOf(value: any, type: ValidationTypes.STRING): value is string;
-	public static isTypeOf(value: any, type: ValidationTypes.SYMBOL): value is symbol;
-	public static isTypeOf(value: any, type: ValidationTypes): boolean {
-		return typeof value === type;
-	}
-
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.BIGINT): asserts value is bigint;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.BOOLEAN): asserts value is boolean;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.FUNCTION): asserts value is Function;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.NUMBER): asserts value is number;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.OBJECT): asserts value is object;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.STRING): asserts value is string;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes.SYMBOL): asserts value is symbol;
-	public static assertsIsTypeOf(value: any, type: ValidationTypes): void {
-		if(typeof value !== type)
-			throw new TypeError(buildMessage(type, typeof value));
-	}
 }
 
 const MSG_CLOSING: string = "`.";
@@ -223,8 +241,8 @@ const MSG_TYPE_1: string = "Argument is not of type `";
 const MSG_TYPE_2: string = "`. Given type: `";
 const MSG_INSTANCE_1: string = "Argument is not an instance of `";
 const MSG_INSTANCE_2: string = "`. Given instance: `";
-const MSG_ARRAY_1: string = "Argument is not an array.";
-const MSG_ARRAY_2: string = "Argument is not an array of type `";
+const MSG_ARRAY: string = "Argument is not an array.";
+const MSG_ARRAY_TYPE: string = "Argument is not an array of type `";
 
 const buildMessage = (wanted: ValidationTypes, given: string): string => {
 	return MSG_TYPE_1 + wanted + MSG_TYPE_2 + given + MSG_CLOSING;
